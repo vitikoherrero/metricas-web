@@ -1,0 +1,19 @@
+{
+  "openalex": {
+    "documents": 172,
+    "citations": 2229,
+    "h_index": 22,
+    "updated": "2026-10-23"
+  },
+  "scholar": {
+    "citations": 5233,
+    "h_index": 35,
+    "updated": "2026-10-23"
+  },
+  "dialnet": {
+    "citations": 189,
+    "h_index": 9,
+    "documents": 42,
+    "updated": "2026-10-23"
+  }
+}
