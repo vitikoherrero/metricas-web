@@ -37,19 +37,31 @@ def openalex():
 
 
 def scopus():
+    # La vista METRICS de Author Retrieval exige estar en la red de una institución
+    # suscrita; desde GitHub se usa Scopus Search, que solo necesita la clave,
+    # y se calculan citas y h a partir de las citas de cada documento.
     key = os.environ.get("SCOPUS_API_KEY")
     if not key:
         raise RuntimeError("falta SCOPUS_API_KEY")
-    d = json.loads(get(
-        f"https://api.elsevier.com/content/author/author_id/{SCOPUS_ID}?view=METRICS",
-        {"X-ELS-APIKey": key, "Accept": "application/json"},
-    ))
-    a = d["author-retrieval-response"][0]
-    core = a.get("coredata", {})
+    headers = {"X-ELS-APIKey": key, "Accept": "application/json"}
+    cites, start, total = [], 0, None
+    while total is None or start < total:
+        d = json.loads(get(
+            "https://api.elsevier.com/content/search/scopus"
+            f"?query=AU-ID({SCOPUS_ID})&field=citedby-count&count=25&start={start}",
+            headers,
+        ))["search-results"]
+        total = int(d["opensearch:totalResults"])
+        entries = [e for e in d.get("entry", []) if "error" not in e]
+        if not entries:
+            break
+        cites += [int(e.get("citedby-count") or 0) for e in entries]
+        start += len(entries)
+    cites.sort(reverse=True)
     return {
-        "documents": int(core["document-count"]),
-        "citations": int(core["cited-by-count"]),
-        "h_index": int(a["h-index"]),
+        "documents": total,
+        "citations": sum(cites),
+        "h_index": sum(1 for i, c in enumerate(cites, 1) if c >= i),
     }
 
 
