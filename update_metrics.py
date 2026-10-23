@@ -15,7 +15,6 @@ OUT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "metricas.js
 OPENALEX_ID = "A5018031815"
 SCOPUS_ID = "55667326400"
 SCHOLAR_ID = "OKIleUEAAAAJ"
-DIALNET_ID = "165226"
 
 BROWSER_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
               "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
@@ -75,28 +74,6 @@ def scholar():
     return {"citations": int(vals[0]), "h_index": int(vals[2])}
 
 
-def dialnet():
-    html = get(f"https://dialnet.unirioja.es/servlet/autor?codigo={DIALNET_ID}",
-               {"Accept-Language": "es-ES,es;q=0.9"})
-    out = {}
-    m = re.search(r"<b>(\d+)</b>[^<]*<span>Citas</span>", html, re.I)
-    if m:
-        out["citations"] = int(m.group(1))
-    m = re.search(r"ndice H:[^<]*<b>(\d+)</b>", html, re.I)
-    if m:
-        out["h_index"] = int(m.group(1))
-    # Suma de las secciones del autor salvo "Tesis dirigidas"
-    m = re.search(r'<ul id="seccionesDeAutor">([\s\S]*?)</ul>', html, re.I)
-    if m:
-        secciones = re.sub(r"dirigidas[\s\S]*?</li>", "", m.group(1), flags=re.I)
-        docs = sum(int(n) for n in re.findall(r"\((\d+)\)", secciones))
-        if docs:
-            out["documents"] = docs
-    if not out:
-        raise RuntimeError("no se encontraron métricas")
-    return out
-
-
 def main():
     try:
         with open(OUT_FILE, encoding="utf-8") as f:
@@ -104,8 +81,9 @@ def main():
     except (FileNotFoundError, json.JSONDecodeError):
         data = {}
 
+    data.pop("dialnet", None)
     for name, fn in [("openalex", openalex), ("scopus", scopus),
-                     ("scholar", scholar), ("dialnet", dialnet)]:
+                     ("scholar", scholar)]:
         try:
             values = {k: v for k, v in fn().items() if v}
             data[name] = {**values, "updated": date.today().isoformat()}
