@@ -6,6 +6,7 @@ La clave de Scopus se lee de la variable de entorno SCOPUS_API_KEY.
 import json
 import os
 import re
+import urllib.error
 import urllib.request
 from datetime import date
 
@@ -98,7 +99,10 @@ def main():
             data[name] = {**values, "updated": date.today().isoformat()}
             print(f"OK    {name}: {values}")
         except Exception as e:
-            print(f"ERROR {name}: {e} (se mantienen los valores anteriores)")
+            detail = ""
+            if isinstance(e, urllib.error.HTTPError):
+                detail = " | " + e.read().decode("utf-8", errors="replace")[:300]
+            print(f"ERROR {name}: {e}{detail} (se mantienen los valores anteriores)")
 
     with open(OUT_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
