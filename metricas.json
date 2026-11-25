@@ -1,9 +1,9 @@
 {
   "openalex": {
-    "documents": 144,
-    "citations": 3247,
+    "documents": 143,
+    "citations": 3064,
     "h_index": 28,
-    "updated": "2026-11-24"
+    "updated": "2026-11-25"
   },
   "scholar": {
     "citations": 5262,
@@ -14,7 +14,7 @@
     "documents": 55,
     "citations": 1486,
     "h_index": 18,
-    "updated": "2026-11-24"
+    "updated": "2026-11-25"
   },
   "wos": {
     "documents": 54,
