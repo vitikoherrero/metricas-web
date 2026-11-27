@@ -1,20 +1,20 @@
 {
   "openalex": {
     "documents": 143,
-    "citations": 3064,
+    "citations": 3076,
     "h_index": 28,
-    "updated": "2026-11-25"
+    "updated": "2026-11-27"
   },
   "scholar": {
-    "citations": 5262,
+    "citations": 5267,
     "h_index": 35,
-    "updated": "2026-11-19"
+    "updated": "2026-11-27"
   },
   "scopus": {
     "documents": 55,
     "citations": 1486,
     "h_index": 18,
-    "updated": "2026-11-26"
+    "updated": "2026-11-27"
   },
   "wos": {
     "documents": 54,
